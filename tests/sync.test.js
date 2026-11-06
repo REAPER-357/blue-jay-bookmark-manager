@@ -150,7 +150,7 @@ async function twoDevices(provider, signIn) {
     const d = device('webdav', [bm('z', 'Z', 'https://z.com')]); d.cfg.webdav.password = 'nope';
     await assert.rejects(d.sync(), /rejected the username or password/);
     d.cfg.webdav.password = 'secret'; servers.webdav.file = '{"not":"ours"}';
-    await assert.rejects(d.sync(), /not a valid Wayfinder file/);
+    await assert.rejects(d.sync(), /not a valid Blue Jay file/);
     assert.strictEqual(servers.webdav.file, '{"not":"ours"}', 'remote file untouched');
     assert.strictEqual(d.bookmarks.length, 1, 'local data untouched');
   });

@@ -1,5 +1,5 @@
 'use strict';
-/* Wayfinder UI. Pure logic lives in core.js, networking in sync.js. */
+/* Blue Jay Bookmarks UI. Pure logic lives in core.js, networking in sync.js. */
 const { NOFOLDER, INCOG, FAV, safeUrl, normalizeUrl, getDomain, folderOf, isUnfiled, newId, validId, cleanFolder } = WF;
 
 // ---------- Storage (all wrapped: storage can fail or be corrupted) ----------
@@ -348,17 +348,17 @@ function renderFoldersBar() {
   const folders = [...new Set(pool().map(folderOf))];
   const incogCount = pool().filter(b => b.isIncognito).length;
   const favCount = pool().filter(b => b.isFavorite).length;
-  const chips = [{ key: 'ALL', label: 'ALL', icon: 'fa-layer-group', count: pool().length }];
-  if (favCount) chips.push({ key: FAV, label: 'Favourites', icon: 'fa-star', count: favCount });
-  if (incogCount) chips.push({ key: INCOG, label: 'Incognito', icon: 'fa-user-secret', count: incogCount });
-  folders.forEach(f => chips.push({ key: f, label: f, icon: 'fa-folder', count: pool().filter(b => folderOf(b) === f).length }));
+  const chips = [{ key: 'ALL', label: 'ALL', icon: 'ic-layers', count: pool().length }];
+  if (favCount) chips.push({ key: FAV, label: 'Favourites', icon: 'ic-star', count: favCount });
+  if (incogCount) chips.push({ key: INCOG, label: 'Incognito', icon: 'ic-venetian-mask', count: incogCount });
+  folders.forEach(f => chips.push({ key: f, label: f, icon: 'ic-folder', count: pool().filter(b => folderOf(b) === f).length }));
 
   document.getElementById('folderBar').innerHTML = chips.map(c => {
     const active = selectedFolderFilter === c.key;
     return `<button data-folder="${escapeHtml(c.key)}" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow-sm ${
       active ? 'bg-green-600 text-white shadow-green-500/20'
              : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}">
-      <i class="fa-solid ${c.icon}"></i><span>${escapeHtml(c.label)}</span>
+      <i class="ic ${c.icon}"></i><span>${escapeHtml(c.label)}</span>
       <span class="text-xs px-1.5 py-0.5 rounded-full ${active ? 'bg-green-700 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}">${c.count}</span>
     </button>`;
   }).join('');
@@ -389,7 +389,7 @@ function renderBookmarksList() {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col items-center justify-center">
-        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 mb-4 text-2xl"><i class="fa-solid fa-bookmark"></i></div>
+        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 mb-4 text-2xl"><i class="ic ic-bookmark"></i></div>
         <h3 class="text-lg font-bold mb-1">No bookmarks found</h3>
         <p class="text-sm text-gray-500 dark:text-gray-400 max-w-sm mb-6">Try adjusting your search or folder filter, or create a new bookmark.</p>
         <button data-action="add" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition">Add Bookmark</button>
@@ -410,7 +410,7 @@ function renderBookmarksList() {
   } else {
     const header = (name, count) => `
       <div class="flex items-center space-x-2 text-sm font-bold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-2">
-        <i class="fa-solid fa-folder-open text-green-600"></i><span>${escapeHtml(name)}</span>
+        <i class="ic ic-folder-open text-green-600"></i><span>${escapeHtml(name)}</span>
         <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300">${count}</span>
       </div>`;
     const grouped = {};
@@ -425,15 +425,15 @@ function favicon(bm, cls) {
   const d = encodeURIComponent(getDomain(bm.url));
   return `<img src="https://www.google.com/s2/favicons?domain=${d}&sz=32" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="${escapeHtml(bm.name)}" class="${cls}">`;
 }
-const incogBadge = '<span class="bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 text-xs px-2 py-0.5 rounded-full font-medium flex items-center space-x-1 flex-shrink-0"><i class="fa-solid fa-user-secret text-[10px]"></i><span>Incognito</span></span>';
+const incogBadge = '<span class="bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 text-xs px-2 py-0.5 rounded-full font-medium flex items-center space-x-1 flex-shrink-0"><i class="ic ic-venetian-mask text-[10px]"></i><span>Incognito</span></span>';
 const tagChip = t => `<span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] px-2 py-0.5 rounded-md font-medium">#${escapeHtml(t)}</span>`;
 const btn = (action, id, icon, hover, pad, title) =>
-  `<button data-action="${action}" data-id="${escapeHtml(id)}" class="${pad} rounded-lg bg-gray-100 dark:bg-gray-700 ${hover} text-gray-600 dark:text-gray-300 transition" title="${title}" aria-label="${title}"><i class="fa-solid ${icon} text-xs"></i></button>`;
+  `<button data-action="${action}" data-id="${escapeHtml(id)}" class="${pad} rounded-lg bg-gray-100 dark:bg-gray-700 ${hover} text-gray-600 dark:text-gray-300 transition" title="${title}" aria-label="${title}"><i class="ic ${icon} text-xs"></i></button>`;
 const editHover = 'hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600';
 const delHover = 'hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600';
 function starBtn(bm, pad) {
   const on = !!bm.isFavorite;
-  return `<button data-action="fav" data-id="${escapeHtml(bm.id)}" class="${pad} rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition ${on ? 'text-amber-500' : 'text-gray-400 dark:text-gray-400'}" title="${on ? 'Remove from favourites' : 'Add to favourites'}" aria-label="${on ? 'Remove from favourites' : 'Add to favourites'}"><i class="fa-${on ? 'solid' : 'regular'} fa-star text-xs"></i></button>`;
+  return `<button data-action="fav" data-id="${escapeHtml(bm.id)}" class="${pad} rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition ${on ? 'text-amber-500' : 'text-gray-400 dark:text-gray-400'}" title="${on ? 'Remove from favourites' : 'Add to favourites'}" aria-label="${on ? 'Remove from favourites' : 'Add to favourites'}"><i class="ic ic-${on ? 'star-filled' : 'star'} text-xs"></i></button>`;
 }
 
 // ---------- Tree view ----------
@@ -447,14 +447,14 @@ function rowHtml(bm, nested) {
     ${favicon(bm, 'w-5 h-5 rounded bg-gray-100 dark:bg-gray-700 flex-shrink-0')}
     <div class="flex-1 min-w-0 flex items-baseline gap-2">
       <a href="${href}" target="_blank" rel="noopener noreferrer" class="font-medium text-sm truncate hover:text-green-600 dark:hover:text-green-400 transition">${escapeHtml(bm.name)}</a>
-      ${bm.isIncognito ? '<i class="fa-solid fa-user-secret text-purple-500 text-xs flex-shrink-0" title="Incognito only"></i>' : ''}
+      ${bm.isIncognito ? '<i class="ic ic-venetian-mask text-purple-500 text-xs flex-shrink-0" title="Incognito only"></i>' : ''}
       <span class="hidden md:inline text-xs text-gray-400 truncate">${escapeHtml(getDomain(bm.url))}</span>
     </div>
     <div class="flex items-center gap-1 flex-shrink-0">
       ${starBtn(bm, 'p-2')}
-      <a href="${href}" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 text-gray-600 dark:text-gray-300 transition" title="Open link" aria-label="Open link"><i class="fa-solid fa-external-link text-xs"></i></a>
-      ${btn('edit', bm.id, 'fa-pen', editHover, 'p-2', 'Edit')}
-      ${btn('delete', bm.id, 'fa-trash', delHover, 'p-2', 'Delete')}
+      <a href="${href}" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-600 text-gray-600 dark:text-gray-300 transition" title="Open link" aria-label="Open link"><i class="ic ic-external-link text-xs"></i></a>
+      ${btn('edit', bm.id, 'ic-pencil', editHover, 'p-2', 'Edit')}
+      ${btn('delete', bm.id, 'ic-trash-2', delHover, 'p-2', 'Delete')}
     </div>
   </div>`;
 }
@@ -471,15 +471,15 @@ function renderTree(items, force) {
   names.forEach(n => {
     const list = folders[n];
     const open = force || openFolders.has(n);
-    const fbtn = (action, icon, title, hover) => `<button data-action="${action}" data-folder="${escapeHtml(n)}" class="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 ${hover} transition" title="${title}" aria-label="${title}"><i class="fa-solid ${icon} text-[11px]"></i></button>`;
+    const fbtn = (action, icon, title, hover) => `<button data-action="${action}" data-folder="${escapeHtml(n)}" class="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 ${hover} transition" title="${title}" aria-label="${title}"><i class="ic ${icon} text-[11px]"></i></button>`;
     html += `<div>
       <div data-action="toggle-folder" data-folder="${escapeHtml(n)}" class="flex items-center gap-3 px-3 py-2.5 cursor-pointer select-none bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-700/60 transition">
         <input type="checkbox" data-select-folder="${escapeHtml(n)}" class="w-4 h-4 accent-green-600 cursor-pointer flex-shrink-0" aria-label="Select all in ${escapeHtml(n)}">
-        <i class="fa-solid fa-chevron-right text-[10px] text-gray-400 w-3 transition-transform ${open ? 'rotate-90' : ''}"></i>
-        <i class="fa-solid ${open ? 'fa-folder-open' : 'fa-folder'} text-green-600 w-5 text-center"></i>
+        <i class="ic ic-chevron-right text-[10px] text-gray-400 w-3 transition-transform ${open ? 'rotate-90' : ''}"></i>
+        <i class="ic ${open ? 'ic-folder-open' : 'ic-folder'} text-green-600 w-5 text-center"></i>
         <span class="font-semibold text-sm truncate flex-1 min-w-0">${escapeHtml(n)}</span>
-        ${fbtn('rename-folder', 'fa-pen', 'Rename folder', 'hover:text-blue-600')}
-        ${fbtn('remove-folder', 'fa-trash', 'Remove folder', 'hover:text-red-600')}
+        ${fbtn('rename-folder', 'ic-pencil', 'Rename folder', 'hover:text-blue-600')}
+        ${fbtn('remove-folder', 'ic-trash-2', 'Remove folder', 'hover:text-red-600')}
         <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300">${list.length}</span>
       </div>
       ${open ? `<div class="divide-y divide-gray-100 dark:divide-gray-700 border-t border-gray-100 dark:border-gray-700">${list.map(b => rowHtml(b, true)).join('')}</div>` : ''}
@@ -487,7 +487,7 @@ function renderTree(items, force) {
   });
 
   if (loose.length) {
-    if (names.length) html += `<div class="px-3 py-1.5 text-[11px] uppercase tracking-wider font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/80"><i class="fa-regular fa-bookmark mr-1"></i>No folder</div>`;
+    if (names.length) html += `<div class="px-3 py-1.5 text-[11px] uppercase tracking-wider font-semibold text-gray-400 bg-gray-50 dark:bg-gray-800/80"><i class="ic ic-bookmark mr-1"></i>No folder</div>`;
     html += loose.map(b => rowHtml(b, false)).join('');
   }
   return `<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden">${html}</div>`;
@@ -555,19 +555,19 @@ function renderTiles(items) {
               </div>
             </div>
           </div>
-          ${bm.note ? `<p class="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-2"><i class="fa-solid fa-note-sticky mr-1 text-gray-400"></i>${escapeHtml(bm.note)}</p>` : ''}
+          ${bm.note ? `<p class="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-2"><i class="ic ic-sticky-note mr-1 text-gray-400"></i>${escapeHtml(bm.note)}</p>` : ''}
           <div class="flex items-center space-x-1.5 flex-wrap gap-y-1 mb-4">
             ${bm.isIncognito ? incogBadge : ''}${(bm.tags || []).map(tagChip).join('')}
           </div>
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
           <a href="${href}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-green-600 dark:text-green-400 hover:underline flex items-center space-x-1">
-            <span>Visit Link</span><i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            <span>Visit Link</span><i class="ic ic-external-link text-[10px]"></i>
           </a>
           <div class="flex items-center space-x-1">
             ${starBtn(bm, 'p-1.5')}
-            ${btn('edit', bm.id, 'fa-pen', editHover, 'p-1.5', 'Edit')}
-            ${btn('delete', bm.id, 'fa-trash', delHover, 'p-1.5', 'Delete')}
+            ${btn('edit', bm.id, 'ic-pencil', editHover, 'p-1.5', 'Edit')}
+            ${btn('delete', bm.id, 'ic-trash-2', delHover, 'p-1.5', 'Delete')}
           </div>
         </div>
       </div>`;
@@ -823,7 +823,7 @@ function updateVaultUI() {
   document.getElementById('vaultBanner').classList.toggle('hidden', !vaultOpen);
   document.getElementById('vaultBanner').classList.toggle('flex', vaultOpen);
   document.getElementById('bulkHideLabel').textContent = vaultOpen ? 'Unhide' : 'Hide';
-  document.getElementById('bulkHideIcon').className = 'fa-solid mr-1 ' + (vaultOpen ? 'fa-eye' : 'fa-eye-slash');
+  document.getElementById('bulkHideIcon').className = 'ic mr-1 ' + (vaultOpen ? 'ic-eye' : 'ic-eye-off');
 }
 async function bulkHide() {
   if (!selected.size) return;
@@ -874,7 +874,7 @@ function renderDups() {
   const body = document.getElementById('dupBody');
   if (!groups.length) {
     body.innerHTML = `<div class="text-center py-10 text-gray-500 dark:text-gray-400">
-      <div class="w-14 h-14 mx-auto mb-3 bg-green-50 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-check"></i></div>
+      <div class="w-14 h-14 mx-auto mb-3 bg-green-50 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center text-xl"><i class="ic ic-check"></i></div>
       <p class="font-semibold">Nothing found</p>
       <p class="text-xs mt-1">${dupMode === 'exact' ? 'No page is saved twice.' : 'No near-identical links found at this level. Try a looser level.'}</p></div>`;
   } else {
@@ -896,10 +896,10 @@ function renderDups() {
               <input type="checkbox" data-dup="${escapeHtml(b.id)}" ${dupSel.has(b.id) ? 'checked' : ''} class="w-4 h-4 accent-red-600 flex-shrink-0">
               ${favicon(b, 'w-5 h-5 rounded bg-gray-100 dark:bg-gray-700 flex-shrink-0')}
               <div class="min-w-0 flex-1">
-                <div class="text-sm font-medium truncate">${escapeHtml(b.name)} ${b.isFavorite ? '<i class="fa-solid fa-star text-amber-500 text-xs"></i>' : ''} ${tag}</div>
+                <div class="text-sm font-medium truncate">${escapeHtml(b.name)} ${b.isFavorite ? '<i class="ic ic-star text-amber-500 text-xs"></i>' : ''} ${tag}</div>
                 <div class="text-xs text-gray-400 truncate">${escapeHtml(b.url)}</div>
               </div>
-              <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 hidden sm:inline"><i class="fa-solid fa-folder mr-1"></i>${escapeHtml(folderOf(b))}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 hidden sm:inline"><i class="ic ic-folder mr-1"></i>${escapeHtml(folderOf(b))}</span>
             </label>`;
           }).join('')}
         </div>
@@ -962,14 +962,14 @@ function toggleTheme() {
   updateThemeUI(isDark);
 }
 function updateThemeUI(isDark) {
-  document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-500';
+  document.getElementById('themeIcon').className = isDark ? 'ic ic-moon text-blue-400' : 'ic ic-sun text-amber-500';
   document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
 }
 
 // ---------- Export / Import ----------
 async function exportData() {
   const payload = WF.buildSnapshot({ bookmarks, tombstones });
-  const ok = await saveTextFile('wayfinder_bookmarks_' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(payload, null, 2), 'application/json');
+  const ok = await saveTextFile('bluejay_bookmarks_' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(payload, null, 2), 'application/json');
   if (ok) showToast('Bookmarks exported');
 }
 
@@ -1114,7 +1114,7 @@ function updateSyncUI() {
 
 function updateSyncButton() {
   const icon = document.getElementById('syncIcon'), dot = document.getElementById('syncDot');
-  icon.className = 'fa-solid text-lg ' + (syncBusy ? 'fa-rotate fa-spin' : 'fa-cloud');
+  icon.className = 'ic text-lg ' + (syncBusy ? 'ic-refresh-cw ic-spin' : 'ic-cloud');
   const off = syncCfg.provider === 'off';
   dot.classList.toggle('hidden', off);
   dot.classList.remove('bg-green-500', 'bg-red-500', 'bg-gray-400');

@@ -1,4 +1,4 @@
-/* Wayfinder sync: one merge engine, four ways to reach another device.
+/* Blue Jay sync: one merge engine, four ways to reach another device.
  *   file      - a JSON file you keep in a synced folder (Drive, Syncthing, Dropbox ...)
  *   firebase  - Google Firestore (your own free Firebase project)
  *   supabase  - Supabase (your own free project)
@@ -307,7 +307,7 @@
         if (!r.ok) throw err('Server answered HTTP ' + r.status + '.');
         let snap;
         try { snap = WF.parseSnapshot(await r.text()); }
-        catch (e) { throw err('The file on the server is not a valid Wayfinder file, so it was left alone.'); }
+        catch (e) { throw err('The file on the server is not a valid Blue Jay file, so it was left alone.'); }
         return { bookmarks: snap.bookmarks, tombstones: snap.tombstones, token: r.headers.get('etag') || '', dropped: snap.dropped };
       },
       async push(p) {
@@ -338,8 +338,8 @@
   async function idbSet(k, v) { const db = await idb(); return new Promise((res, rej) => { const r = db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
   async function chooseFile(create) {
     if (!hasFileAccessApi()) throw err('This device cannot keep a file linked. Sync will ask you to pick the file each time.', 'CONFIG');
-    const types = [{ description: 'Wayfinder bookmarks', accept: { 'application/json': ['.json'] } }];
-    const h = create ? await window.showSaveFilePicker({ suggestedName: 'wayfinder-sync.json', types })
+    const types = [{ description: 'Blue Jay bookmarks', accept: { 'application/json': ['.json'] } }];
+    const h = create ? await window.showSaveFilePicker({ suggestedName: 'bluejay-sync.json', types })
                      : (await window.showOpenFilePicker({ types, multiple: false }))[0];
     await idbSet('fileHandle', h);
     return h.name;
@@ -357,13 +357,13 @@
           await ensureWritable(h);
           const f = await h.getFile();
           let snap;
-          try { snap = WF.parseSnapshot(await f.text()); } catch (e) { throw err('The sync file is not a valid Wayfinder file, so it was left alone.'); }
+          try { snap = WF.parseSnapshot(await f.text()); } catch (e) { throw err('The sync file is not a valid Blue Jay file, so it was left alone.'); }
           return { bookmarks: snap.bookmarks, tombstones: snap.tombstones, token: f.lastModified, dropped: snap.dropped };
         }
         const picked = await hooks.pickFile();
         if (!picked) return null; // cancelled
         let snap;
-        try { snap = WF.parseSnapshot(picked.text); } catch (e) { throw err('That file is not a valid Wayfinder file, so it was left alone.'); }
+        try { snap = WF.parseSnapshot(picked.text); } catch (e) { throw err('That file is not a valid Blue Jay file, so it was left alone.'); }
         return { bookmarks: snap.bookmarks, tombstones: snap.tombstones, token: null, dropped: snap.dropped };
       },
       async push(p) {
@@ -376,7 +376,7 @@
           await w.write(text); await w.close();
           return;
         }
-        const saved = await hooks.saveFile('wayfinder-sync.json', text);
+        const saved = await hooks.saveFile('bluejay-sync.json', text);
         if (saved === false) throw err('Merged file was not saved. Your phone keeps the merged data; run Sync again to save it.', 'CANCELLED');
       }
     };

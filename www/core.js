@@ -1,4 +1,4 @@
-/* Wayfinder core: pure logic with no DOM access (except the optional HTML import parser).
+/* Blue Jay core: pure logic with no DOM access (except the optional HTML import parser).
  * Works in the browser (window.WF) and in Node (module.exports) so it can be unit-tested. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -303,7 +303,7 @@
     if (!text) return { bookmarks: [], tombstones: {}, dropped: 0 };
     const j = JSON.parse(text);
     const list = Array.isArray(j) ? j : (j && Array.isArray(j.bookmarks) ? j.bookmarks : null);
-    if (!list) throw new Error('This is not a Wayfinder bookmarks file');
+    if (!list) throw new Error('This is not a Blue Jay bookmarks file');
     let dropped = 0;
     const seen = new Set(), bookmarks = [];
     list.forEach(raw => {
